@@ -1,6 +1,45 @@
-// alert("Welcome! Let's play a game of Wordplay! \nInstructions: \nYou will be given a set of letters and your job is to find all of the words you can make with these set of letters.");
 var MIN_LENGTH = 3;
 var MAX_LENGTH = 6;
+var theWord = chooseWord();
+var guessedWords = [];
+
+alert("Welcome! Let's play a game of Wordplay! \nInstructions: \nYour job is to find all of the words you can make with a given set of letters.");
+console.log(theWord);
+console.log(otherWords());
+rootWord = scramble(theWord);
+console.log(rootWord);
+var resp = null;
+var str = '';
+do{
+    resp = prompt("Enter a guess:");
+    str += "Available letters: " + rootWord + "\n";
+    str += underscore(otherWords(), resp);
+    console.log(str);
+    if(resp != null && resp == "*"){
+        rootWord= scramble(rootWord);
+        alert("Shuffling root word");
+    }else if(resp != null && resp.length < MIN_LENGTH){
+        alert("Guess is too short!");
+    }else if(resp != null && resp.length > MAX_LENGTH){
+        alert("Guess is too long!");
+    }else if(resp != null && guessedWords.includes(resp)){
+        alert("Already guessed " + resp + "!");
+    }else if(resp != null && descrambledWords.includes(resp)){
+        alert("Correct! " + resp);
+        guessedWords.push(resp)
+    }else{
+        alert(resp + " is not a word!");
+    }
+    //console.clear();
+}while(null != resp && guessedWords.length<otherWords().length);
+
+var key = "You answered " + guessedWords.length + " out of " + otherWords().length + "!\n";
+for(let i=0; i<otherWords().length; i++){
+    var words = otherWords()[i];
+    key = key + words + "\n";
+}
+console.log(key);
+
 function chooseWord(){ // randomly selects a 6-letter root word
     let word = dictionary[Math.floor(Math.random() * dictionary.length)];
     while(word.length !== MAX_LENGTH){
@@ -8,9 +47,6 @@ function chooseWord(){ // randomly selects a 6-letter root word
     }
     return word;
 }
-
-let theWord = chooseWord();
-console.log(theWord) // making sure chooseWord() works. it works now!!
 
 function scramble (str){ // scrambles the chosen word
     let theWord = str.split('');
@@ -25,46 +61,49 @@ function scramble (str){ // scrambles the chosen word
     return str;
 }
 
-let scrWord = scramble(theWord);
-console.log(scrWord); // making sure the scrambler works. it works
-
-let rootWord = dictionary[Math.floor(Math.random() * dictionary.length)];
-
 function appears(elem, list){
     let i = 0;
-    let counter = 0;
-    if(elem!=list[i]){
+    if(list.length == 0){
         return 0;
     }else{
-        counter++;
-        appears(elem, );
+        const result = list.filter(num => num==elem)
+        return result.length;
     }
 }
 
-function contains(chosenWord, otherStr){ // check if a word contains the letters of another word
+function contains(chosenWord, otherStr){ // check if root word contains the letters of another word
     let arr1 = chosenWord.split('');
     let arr2 = otherStr.split('');
-    if(arr2.every((elem=>arr1.includes(elem)))){
-        return true;
+    if(arr2.every(elem=>arr1.includes(elem))){
+        if(arr2.every(x=>appears(x, arr2)==arr1.every(x=>appears(x, arr1)))){
+            return true;
     }else{
         return false;
     }
 }
+}
 
 function otherWords(){ // returns the other words
-    let list = "";
+    let list = [];
     for(let i=0; i<dictionary.length-1; i++){
-        if(contains(rootWord, dictionary[i]) && dictionary[i].length>=3){
-            list = list + dictionary[i] + ", ";
+        if(contains(theWord, dictionary[i]) && dictionary[i].length>=3 && dictionary[i].length<=6 ){
+            list.push(dictionary[i]);
         }
     }
     return list;
 }
-// console.log(rootWord);
-// console.log(otherWords());
 
-// while(){
-
-//     let input = prompt("Try to find as many words as you can with these letters!");
-
-// }
+function underscore(list, guess){
+    var k = 0;
+    for(let i=0; i<=list.length-1; i++){
+        if(list.includes(guess)){
+            str += (guess + '\n');
+        }else{
+        for(let j=0; j<=list[k].length-1; j++){
+            str += "_ ";
+        }}
+        str += '\n'
+        k++;
+    }
+    return str;
+}
