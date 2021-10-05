@@ -2,6 +2,7 @@ var MIN_LENGTH = 3;
 var MAX_LENGTH = 6;
 var theWord = chooseWord();
 var guessedWords = [];
+var lst = [];
 
 alert("Welcome! Let's play a game of Wordplay! \nInstructions: \nYour job is to find all of the words you can make with a given set of letters.");
 console.log(theWord);
@@ -9,11 +10,13 @@ console.log(otherWords());
 rootWord = scramble(theWord);
 console.log(rootWord);
 var resp = null;
-var str = '';
+let str = '';
 do{
     resp = prompt("Enter a guess:");
     str += "Available letters: " + rootWord + "\n";
-    str += underscore(otherWords(), resp);
+    for(let i=0; i<=otherWords().length; i++){
+        str += underscore(otherWords(), resp)[i] + "\n";
+    }
     console.log(str);
     if(resp != null && resp == "*"){
         rootWord= scramble(rootWord);
@@ -24,13 +27,13 @@ do{
         alert("Guess is too long!");
     }else if(resp != null && guessedWords.includes(resp)){
         alert("Already guessed " + resp + "!");
-    }else if(resp != null && descrambledWords.includes(resp)){
+    }else if(resp != null && otherWords().includes(resp)){
         alert("Correct! " + resp);
         guessedWords.push(resp)
-    }else{
+    }else if(resp != null && !otherWords().includes(resp)){
         alert(resp + " is not a word!");
     }
-    //console.clear();
+    console.clear();
 }while(null != resp && guessedWords.length<otherWords().length);
 
 var key = "You answered " + guessedWords.length + " out of " + otherWords().length + "!\n";
@@ -94,16 +97,15 @@ function otherWords(){ // returns the other words
 }
 
 function underscore(list, guess){
-    var k = 0;
-    for(let i=0; i<=list.length-1; i++){
-        if(list.includes(guess)){
-            str += (guess + '\n');
-        }else{
-        for(let j=0; j<=list[k].length-1; j++){
-            str += "_ ";
-        }}
-        str += '\n'
-        k++;
+    for(var i=0; i<list.length-1; i++){
+        let string = '';
+        for(var j=0; j<list[i].length;j++){
+            string += "_ ";
+        }
+        lst.push(string);
     }
-    return str;
+    if(list.includes(guess)){
+        lst.splice(list.indexOf(guess), 1, guess);
+    }
+    return lst;
 }
